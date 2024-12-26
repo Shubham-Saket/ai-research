@@ -27,6 +27,17 @@ Performance and Efficiency:
 
 Lyra achieves state-of-the-art results across various benchmarks, including vision-language, vision-speech, and speech-language tasks.
 It operates with fewer computational resources and less training data compared to other omni-models, enhancing its suitability for latency-sensitive and long-context multi-modality applications.
+
+Most of the speech or video tokens are not relevant to text token hence the Latent Multimodality extractor. 
+Concretely, insteadof applying this strategy toevery layer, they implemented a block-based manner. Suppose the LLM consists of mn layers; divide them into blocks of
+ m layers each, resulting in n blocks. At the final layer of each block,we apply our following information extraction
+ strategy,which evaluates the similarity between the attention scores of tokens from each modality and the question text tokens.
+
+There is a growing trend toward processing longer single-modality content, such as long text and long video, in Multi-modal Large Language Models (MLLMs). However, current MLLMs struggle with long speech due to limitations in speech encoders. Models like Intern-Omni, VITA, and LLaMA-Omni, which use Whisper-like encoders, can only process short audio inputs (around 30 seconds), while more complex encoders can handle up to one minute. The main challenge lies in the lack of long speech datasets and proper preprocessing methods.
+To address this, the paper introduces the first Speech Fine-Tuning (SFT) dataset for long speech understanding. This dataset consists of approximately 12,000 long-form audio recordings (ranging from several minutes to two hours) sourced from diverse YouTube content, including interviews, speeches, and informational videos. The recordings cover a wide range of topics, such as humanities, current events, technology, and society. These audio files were paired with related transcripts, and question-answer pairs were generated using a Large Language Model (LLM) to encourage a comprehensive understanding of long speech content.
+A key challenge in processing long speech was the limitation of the speech encoder. Inspired by image segmentation methods like LLaVA-NeXT, a new approach was adopted to improve the encoder's handling of long audio. For instance, a 30-second audio clip encoded by the Whisper-v3 encoder results in 1,500 tokens, but for a two-hour audio clip, this would lead to 360,000 tokens, which is beyond typical processing capacity. To manage this, compression techniques were applied to speech tokens.
+Experimental results showed that a higher number of tokens improved performance up to a certain point, but beyond that, the gains were limited. Balancing computational cost and performance, the model was optimized to handle long speech cases using 300 compressed tokens.
+
 ## 1. Low-Rank Adaptation (LoRA) for Multi-Modality
 LoRA optimizes pretrained models for new tasks without updating all model parameters. In Lyra, it adapts the model for multi-modality.
 
